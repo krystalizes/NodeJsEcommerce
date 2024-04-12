@@ -1,0 +1,45 @@
+{
+  "name": "NodeJs-Ecommerce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon --inspect src/index.js",
+    "watch": "node-sass -w src/resources/scss/ -o src/public/css/",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krystalizes/NodeJsEcommerce.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "Vuong Bao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krystalizes/NodeJsEcommerce/issues"
+  },
+  "homepage": "https://github.com/krystalizes/NodeJsEcommerce#readme",
+  "lint-staged": {
+    "src/**/*.{js,json,scss}": "prettier --write --single-quote --trailing-comma all --tab-width 4"
+  },
+  "dependencies": {
+    "express": "^4.18.3",
+    "express-handlebars": "^7.1.2",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.2.2",
+    "mongoose-delete": "^1.0.2",
+    "mongoose-slug-updater": "^3.3.0",
+    "shortid": "^2.2.16"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "morgan": "^1.10.0",
+    "node-sass": "^9.0.0",
+    "nodemo": "^1.0.0",
+    "prettier": "^3.2.5"
+  }
+}

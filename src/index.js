@@ -6,7 +6,7 @@ const methodOverride = require('method-override');
 const app = express();
 const port = 3000;
 // const SortMiddleware = require('./app/middleware/SortMiddleware');
-// const route = require('./routes');
+const route = require('./routes');
 const db = require('./config/db');
 
 db.connected();
@@ -51,7 +51,7 @@ app.engine(
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resources', 'views'));
 
-// route(app);
+route(app);
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
 });

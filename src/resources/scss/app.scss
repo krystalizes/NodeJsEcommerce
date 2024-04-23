@@ -1,0 +1,29 @@
+a {
+    text-decoration: none;
+}
+.checkbox-select-all-options {
+    width: 250px;
+}
+.category-select {
+    width: 200px;
+}
+.d-flex {
+    gap: 20px;
+}
+.sort.rotate {
+    transform: rotate(90deg);
+}
+#imageContainer {
+    display: flex;
+    flex-wrap: wrap;
+    // justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    margin-top: 10px; /* Adjust margin as needed */
+}
+
+#imageContainer img {
+    max-width: 200px; /* Adjust max-width of images as needed */
+    max-height: 200px; /* Adjust max-height of images as needed */
+    margin: 5px; /* Adjust margin between images as needed */
+}

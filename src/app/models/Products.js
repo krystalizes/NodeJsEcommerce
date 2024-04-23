@@ -6,11 +6,26 @@ const Schema = mongoose.Schema;
 const Products = new Schema(
     {
         name: { type: String, required: true },
-        description: { type: String, maxLength: 225 },
-        image: { type: String, maxLength: 600 },
-        price: { type: Number, maxLength: 600 },
+        description: { type: String },
+        image: [
+            {
+                url: {
+                    type: String,
+                    required: true,
+                },
+                public_id: {
+                    type: String,
+                    required: true,
+                },
+            },
+        ],
+        price: { type: Number, maxLength: 20 },
         amount: { type: Number, required: true, maxLength: 225 },
-        category: { type: String, required: true, maxLength: 225 },
+        category: {
+            type: Schema.Types.ObjectId,
+            ref: 'Categories',
+            required: true,
+        },
         slug: { type: String, slug: 'name', unique: true },
     },
     {

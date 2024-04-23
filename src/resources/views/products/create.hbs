@@ -1,0 +1,64 @@
+<div class="mt-4">
+    <h3>Thêm sản phẩm</h3>
+    <form method="POST" action="/products/store" id="form" enctype="multipart/form-data">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="name" name="name" placeholder="">
+            <label for="name" class="form-label">Tên</label>          
+        </div>           
+        <div class="form-floating mb-3">
+            <textarea type="text" class="form-control" id="description" name="description" placeholder=""></textarea>
+            <label for="description" class="form-label">Miêu tả</label>      
+        </div>            
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="image">Ảnh</label>
+            <input type="file" class="form-control" id="image" name="image" accept=".jpg, .jpeg, .png" multiple required>
+        </div>
+        <div id="fileNames"></div>
+        <div id="imageContainer"></div>
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="price" name="price" min="0" placeholder="">
+            <label for="price" class="form-label">Gía</label>
+        </div>     
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="amount" name="amount" min="0" placeholder="">
+            <label for="amount" class="form-label">Số lượng</label>
+        </div>
+        <div class="form-floating mb-3">
+            <select class="form-select category-select" id="category" name="category">
+                <option selected value="default"> -- Chọn phân loại -- </option>
+                {{#each categories}}
+                    <option value="{{this._id}}">{{this.name}}</option>
+                {{/each}}
+            </select>
+            <label for="category" class="form-label">Phân loại</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Lưu sản phẩm mới</button>
+    </form>
+</div>
+<script>
+    document.getElementById('image').addEventListener('change', function(event) {
+        const fileInput = event.target;
+        const files = fileInput.files;
+        const fileNamesContainer = document.getElementById('fileNames');
+        const imageContainer = document.getElementById('imageContainer');
+        fileNamesContainer.innerHTML = '';
+        imageContainer.innerHTML = ''; 
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const fileName = document.createElement('div');
+                fileName.textContent = files[i].name;
+                fileNamesContainer.appendChild(fileName);
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.alt = file.name;
+                imageContainer.appendChild(img);
+            };
+
+            reader.readAsDataURL(file); 
+        }
+    });
+</script>

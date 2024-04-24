@@ -14,17 +14,52 @@ class ProductsController {
     //         })
     //         .catch(next);
     // }
-    // GET /courses/create
+    // GET /products/stored
+    stored(req, res, next) {
+        let productsFindAll = Product.find({});
+        if (req.query.hasOwnProperty('_sort')) {
+            productsFindAll = productsFindAll.sort({
+                [req.query.column]: req.query.type,
+            });
+        }
+        Promise.all([
+            productsFindAll,
+            Product.countDocuments(),
+            Product.countDocumentsWithDeleted(),
+        ])
+            .then(([products, notDeletedCount, allCount]) => {
+                const deletedCount = allCount - notDeletedCount;
+                res.render('admin/stored-products', {
+                    deletedCount: deletedCount,
+                    products: multipleMongooseToObject(products),
+                });
+            })
+            .catch(next);
+    }
+    // GET /products/trashed
+    trashed(req, res, next) {
+        Product.findDeleted({})
+            .then((products) => {
+                const deletedProducts = products.filter(
+                    (product) => product.deleted,
+                );
+                res.render('admin/trashed-products', {
+                    products: multipleMongooseToObject(deletedProducts),
+                });
+            })
+            .catch(next);
+    }
+    // GET /products/create
     create(req, res, next) {
         Category.find({})
             .then((categories) => {
-                res.render('products/create', {
+                res.render('admin/create', {
                     categories: multipleMongooseToObject(categories),
                 });
             })
             .catch(next);
     }
-    // POST /courses/store
+    // POST /products/store
     async store(req, res, next) {
         const { name, description, price, amount, category } = req.body;
         try {
@@ -73,45 +108,45 @@ class ProductsController {
     //         .then(() => res.redirect('/me/stored-courses'))
     //         .catch(next);
     // }
-    // // DELETE /courses/:id
-    // delete(req, res, next) {
-    //     Course.delete({ _id: req.params.id })
-    //         .then(() => res.redirect('back'))
-    //         .catch(next);
-    // }
-    // // DELETE /courses/:id/force
-    // forceDelete(req, res, next) {
-    //     Course.deleteOne({ _id: req.params.id })
-    //         .then(() => res.redirect('back'))
-    //         .catch(next);
-    // }
-    // // PATCH /courses/:id/restore
-    // restore(req, res, next) {
-    //     Course.restore({ _id: req.params.id })
-    //         .then(() => res.redirect('back'))
-    //         .catch(next);
-    // }
-    // // POST /courses/handle-form-action
-    // formAction(req, res, next) {
-    //     switch (req.body.action) {
-    //         case 'delete':
-    //             Course.delete({ _id: { $in: req.body.courseIds } })
-    //                 .then(() => res.redirect('back'))
-    //                 .catch(next);
-    //             break;
-    //         case 'restore':
-    //             Course.restore({ _id: { $in: req.body.courseIds } })
-    //                 .then(() => res.redirect('back'))
-    //                 .catch(next);
-    //             break;
-    //         case 'forceDelete':
-    //             Course.deleteOne({ _id: { $in: req.body.courseIds } })
-    //                 .then(() => res.redirect('back'))
-    //                 .catch(next);
-    //             break;
-    //         default:
-    //             res.json({ message: 'Action invalid' });
-    //     }
-    // }
+    // DELETE /products/:id
+    delete(req, res, next) {
+        Product.delete({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next);
+    }
+    // DELETE /products/:id/force
+    forceDelete(req, res, next) {
+        Product.deleteOne({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next);
+    }
+    // PATCH /products/:id/restore
+    restore(req, res, next) {
+        Product.restore({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next);
+    }
+    // POST /products/handle-form-action
+    formAction(req, res, next) {
+        switch (req.body.action) {
+            case 'delete':
+                Product.delete({ _id: { $in: req.body.productIds } })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            case 'restore':
+                Product.restore({ _id: { $in: req.body.productIds } })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            case 'forceDelete':
+                Product.deleteOne({ _id: { $in: req.body.productIds } })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            default:
+                res.json({ message: 'Action invalid' });
+        }
+    }
 }
 module.exports = new ProductsController();

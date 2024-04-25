@@ -86,7 +86,7 @@ class ProductsController {
             await product.save();
             console.log('Product added successfully');
             // req.flash('success','Sản phẩm đã được thêm mới thành công!');
-            res.redirect('/');
+            res.redirect('/products/stored');
         } catch (error) {
             console.error(error);
             res.status(500).send(error);
@@ -116,7 +116,15 @@ class ProductsController {
     }
     // DELETE /products/:id/force
     forceDelete(req, res, next) {
-        Product.deleteOne({ _id: req.params.id })
+        Product.findOneWithDeleted({ _id: req.params.id })
+            .then((product) => {
+                const publicIds = product.image.map((img) => img.public_id);
+                const deletePromises = publicIds.map((publicId) =>
+                    cloudinary.uploader.destroy(publicId),
+                );
+                return Promise.all(deletePromises);
+            })
+            .then(() => Product.deleteOne({ _id: req.params.id }))
             .then(() => res.redirect('back'))
             .catch(next);
     }
@@ -140,9 +148,10 @@ class ProductsController {
                     .catch(next);
                 break;
             case 'forceDelete':
-                Product.deleteOne({ _id: { $in: req.body.productIds } })
-                    .then(() => res.redirect('back'))
-                    .catch(next);
+                console.log(req.body.productIds);
+                // Product.deleteOne({ _id: { $in: req.body.productIds } })
+                //     .then(() => res.redirect('back'))
+                //     .catch(next);
                 break;
             default:
                 res.json({ message: 'Action invalid' });

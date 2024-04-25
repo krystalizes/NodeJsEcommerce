@@ -2,7 +2,7 @@
     <h3>Thêm sản phẩm</h3>
     <form method="POST" action="/products/store" id="form" enctype="multipart/form-data">
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="name" name="name" placeholder="">
+            <input type="text" class="form-control" id="name" name="name" placeholder="" required>
             <label for="name" class="form-label">Tên</label>          
         </div>           
         <div class="form-floating mb-3">
@@ -32,33 +32,55 @@
             </select>
             <label for="category" class="form-label">Phân loại</label>
         </div>
-        <button type="submit" class="btn btn-primary">Lưu sản phẩm mới</button>
+        <button type="submit" class="btn btn-primary save-btn" disabled>
+            <span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>
+            Lưu sản phẩm mới
+        </button>
     </form>
 </div>
 <script>
-    document.getElementById('image').addEventListener('change', function(event) {
-        const fileInput = event.target;
-        const files = fileInput.files;
-        const fileNamesContainer = document.getElementById('fileNames');
-        const imageContainer = document.getElementById('imageContainer');
-        fileNamesContainer.innerHTML = '';
-        imageContainer.innerHTML = ''; 
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-
-            reader.onload = function(event) {
-                const fileName = document.createElement('div');
-                fileName.textContent = files[i].name;
-                fileNamesContainer.appendChild(fileName);
-                const img = document.createElement('img');
-                img.src = event.target.result;
-                img.alt = file.name;
-                imageContainer.appendChild(img);
-            };
-
-            reader.readAsDataURL(file); 
+    document.addEventListener('DOMContentLoaded',function() {
+        var checkSaveBtn=$('.save-btn')
+        var dropdown = $('.category-select')
+        dropdown.change(function(){
+            renderCheckAllBtn()
+        })
+        function renderCheckAllBtn(){
+             if(dropdown.val()!=="default"){
+                checkSaveBtn.prop('disabled',false)
+            }else{
+                 checkSaveBtn.prop('disabled', true);
+            }
         }
-    });
+         checkSaveBtn.click(function () {
+            checkSaveBtn.prop('disabled', true); 
+            checkSaveBtn.children('.spinner-border').removeClass('visually-hidden'); 
+            $('#form').submit();
+        });
+        document.getElementById('image').addEventListener('change', function(event) {
+            const fileInput = event.target;
+            const files = fileInput.files;
+            const fileNamesContainer = document.getElementById('fileNames');
+            const imageContainer = document.getElementById('imageContainer');
+            fileNamesContainer.innerHTML = '';
+            imageContainer.innerHTML = ''; 
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const fileName = document.createElement('div');
+                    fileName.textContent = files[i].name;
+                    fileNamesContainer.appendChild(fileName);
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.alt = file.name;
+                    imageContainer.appendChild(img);
+                };
+
+                reader.readAsDataURL(file); 
+            }
+        });
+    })
 </script>

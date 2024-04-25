@@ -20,13 +20,13 @@ const Products = new Schema(
             },
         ],
         price: { type: Number, maxLength: 20 },
-        amount: { type: Number, required: true, maxLength: 225 },
+        amount: { type: Number, maxLength: 225 },
         category: {
             type: Schema.Types.ObjectId,
             ref: 'Categories',
             required: true,
         },
-        slug: { type: String, slug: 'name', unique: true },
+        slug: { type: String, slug: 'name', forceIdSlug: true },
     },
     {
         timestamps: true,

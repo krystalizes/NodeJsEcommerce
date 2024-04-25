@@ -27,6 +27,7 @@ app.engine(
         extname: '.hbs',
         helpers: {
             sum: (a, b) => a + b,
+            gt: (a, b) => (a > b ? true : false),
             sortable: (field, sort) => {
                 const sortType = field === sort.column ? sort.type : 'default';
                 const icons = {

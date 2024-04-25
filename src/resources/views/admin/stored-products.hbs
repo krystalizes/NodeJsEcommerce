@@ -13,8 +13,8 @@
       <button type="button" class="btn btn-primary check-all-submit-btn disabled">Thực hiện</button>
     </div>
     
-    <table class="table">
-        <thead>
+    <table class="table table-hover align-middle">
+        <thead style="text-align:center">
             <tr>
                 <th scope="col"></th>
                 <th scope="col">#</th>
@@ -23,8 +23,7 @@
                   {{{sortable 'name' _sort}}}
                 </th>
                 <th scope="col">
-                  Ảnh
-                  {{{sortable 'image' _sort}}}
+                  Ảnh                 
                 </th>
                 <th scope="col">
                   Gía
@@ -51,9 +50,33 @@
                 </td>
                 <th scope="row">{{sum @index 1}}</th>
                 <td>{{this.name}}</td>
-                <td>{{this.image}}</td>
-                <td>{{this.price}}</td>
-                <td>{{this.amount}}</td>
+                <td class="fixed-carousel-column">
+                    <div id="carouselExample-{{@index}}" class="carousel slide" data-bs-ride="false">
+                      <div class="carousel-inner">
+                          {{#each this.image}}
+                            <div class="carousel-item {{#if @first}}active{{/if}}">
+                                <a href="#"  data-bs-toggle="modal" data-bs-target="#imageModal">
+                                    <img src="{{this.url}}" class="w-100 carousel-image" alt="{{../name}} Image {{@index}}">
+                                </a>
+                            </div>
+                            
+                          {{/each}}
+                      </div>
+                      {{#if (gt this.image.length 1)}}
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample-{{@index}}" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample-{{@index}}" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                      </button>
+                      {{/if}}
+                    </div>
+                    
+                </td>
+                <td style="text-align: center">{{this.price}}</td>
+                <td style="text-align: center">{{this.amount}}</td>
                 <td>{{this.createdAt}}</td>
                 <td>
                     <a class="btn btn-primary" href="/products/{{this._id}}/edit" role="button">Sửa</a>
@@ -62,16 +85,28 @@
             </tr>
             {{else}}
             <tr>
-              <td colspan="5" class="text-center">
+              <td colspan="10" class="text-center">
                 Không có sản phẩm nào trong hệ thống
-                <a href="/products/create/">Thêm sản phẩmc</a>
+                <a href="/products/create/">Thêm sản phẩm</a>
               </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </form>
-
+<!-- Image modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">                           
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImage" src="" class="img-fluid"> </div>
+      </div>
+    </div>
+  </div>
+</div>                   
 {{!Confirm delete products}}
 <div class="modal fade" id="delete-products-Modal" tabindex="-1" aria-labelledby="deleteProductsModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -103,6 +138,18 @@
     var checkAllSubmitBtn=$('.check-all-submit-btn')
     var containerForm=document.forms['container-form']
     var dropdown = $('.checkbox-select-all-options')
+    // Images clicked
+    $(document).ready(function() {
+      $('.carousel-image').click(function() {
+        const imageUrl = $(this).attr('src');
+        $('#modalImage').attr('src', imageUrl); 
+      });
+      $('#imageModal').click(function(event) {
+        if (event.target.id !== 'modalImage') {
+          $(this).modal('hide');
+        }
+      });
+    });
     // Dialog confirm clicked
     if (deleteproductsModal) {
         deleteproductsModal.addEventListener('show.bs.modal', event => {

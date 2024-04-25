@@ -19,11 +19,14 @@ a {
     // justify-content: center;
     align-items: center;
     max-width: 100%;
-    margin-top: 10px; /* Adjust margin as needed */
+    margin-top: 10px;
 }
 
 #imageContainer img {
-    max-width: 200px; /* Adjust max-width of images as needed */
-    max-height: 200px; /* Adjust max-height of images as needed */
-    margin: 5px; /* Adjust margin between images as needed */
+    max-width: 200px;
+    max-height: 200px;
+    margin: 5px;
+}
+.fixed-carousel-column {
+    width: 250px;
 }

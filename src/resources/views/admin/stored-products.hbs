@@ -171,8 +171,7 @@
     })
     // Check box 'all' state change
     productItemCheck.change(function(){
-      var allBoxChecked = productItemCheck.length === $('input[name="productIds[]"]:checked').length
-      checkboxAll.prop('checked',allBoxChecked)
+      updateSelectAllCheckbox()
       renderCheckAllBtn()
     })
     // Submit btn click
@@ -186,6 +185,20 @@
     dropdown.change(function(){
       renderCheckAllBtn()
     })
+    // Add click event listener to each row
+    $('tbody').on('click', 'tr', function(event) {
+      if (!$(event.target).is('input[type="checkbox"]') && !$(event.target).closest('.carousel').length) {
+        const checkbox = $(this).find('input[type="checkbox"]');
+        checkbox.prop('checked', !checkbox.prop('checked'));
+        updateSelectAllCheckbox()
+        renderCheckAllBtn();
+      }
+    });
+    // Select all check box change
+    function updateSelectAllCheckbox() {
+      var allBoxChecked = productItemCheck.length === $('input[name="productIds[]"]:checked').length
+      checkboxAll.prop('checked', allBoxChecked)
+    }
     // Submit btn state change
     function renderCheckAllBtn(){
       var checkedCount = $('input[name="productIds[]"]:checked').length
@@ -194,6 +207,6 @@
       }else{
         checkAllSubmitBtn.addClass('disabled')
       }
-    }
+    }    
   })
 </script>

@@ -86,7 +86,7 @@
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header">                           
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" id="img-modal-close" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <img id="modalImage" src="" class="img-fluid"> </div>
@@ -135,7 +135,7 @@
         $('#modalImage').attr('src', imageUrl); 
       });
       $('#imageModal').click(function(event) {
-        if (event.target.id !== 'modalImage') {
+        if (event.target.id == 'img-modal-close') {
           $(this).modal('hide');
         }
       });

@@ -1,22 +1,129 @@
 <div class="mt-4">
-    <h3>Cập nhật khóa học</h3>
-    <form method="POST" action="/courses/{{course._id}}?_method=PUT">
-        <div class="mb-3">
-            <label for="name" class="form-label">Tên</label>
-            <input type="text" class="form-control" value="{{course.name}}" id="name" name="name">
+    <h3>Chỉnh sửa thông tin sản phẩm</h3>
+    <form method="POST" id="form" action="/products/{{product._id}}?_method=PUT" enctype="multipart/form-data">
+       <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="name" name="name" placeholder="" value="{{product.name}}" required>
+            <label for="name" class="form-label">Tên</label>          
+        </div>           
+        <div class="form-floating mb-3">
+            <textarea type="text" class="form-control" id="description" name="description" placeholder="">{{product.description}}</textarea>
+            <label for="description" class="form-label">Miêu tả</label>      
+        </div>            
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="image">Ảnh</label>
+            <input type="file" class="form-control" id="image" name="image" accept=".jpg, .jpeg, .png" multiple>
+        </div> 
+        <input type="hidden" id="delImageUrl" name="delImageUrl">
+        <input type="hidden" id="saveImageUrl" name="saveImageUrl">
+        <div id="fileNames"></div>
+        <div id="imageContainer">
+            {{#each product.image}}
+                <a href="#">
+                    <img src="{{this.url}}" class="img-thumbnail img-db" alt="{{../name}} Image {{@index}}">  
+                </a>
+            {{/each}}
         </div>
-         <div class="mb-3">
-            <label for="description" class="form-label">Miêu tả</label>
-            <textarea class="form-control" id="description" name="description">{{course.description}}</textarea>
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="price" name="price" min="0" placeholder="" value="{{product.price}}">
+            <label for="price" class="form-label">Gía</label>
+        </div>     
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="amount" name="amount" min="0" placeholder="" value="{{product.amount}}">
+            <label for="amount" class="form-label">Số lượng</label>
         </div>
-         <div class="mb-3">
-            <label for="vidid" class="form-label">Video ID</label>
-            <input type="text" class="form-control" value="{{course.vidid}}" id="vidid" name="vidid">
+        <div class="form-floating mb-3">
+            <select class="form-select category-select" id="category" name="category">
+                <option value="default"> -- Chọn phân loại -- </option>
+                    {{#each categories}}
+                        <option value="{{this._id}}">
+                            {{this.name}}
+                        </option>
+                    {{/each}}
+            </select>
+            <label for="category" class="form-label">Phân loại</label>
         </div>
-        <div class="mb-3">
-            <label for="level" class="form-label">Trình độ khóa học</label>
-            <input type="text" class="form-control" value="{{course.level}}" id="level" name="level">
-        </div>
-        <button type="submit" class="btn btn-primary">Lưu lại</button>
+        <button type="submit" class="btn btn-primary save-btn" >
+            <span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>
+            Lưu sản phẩm mới
+        </button>
     </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded',function() {
+        const delImageUrls = [];
+        const saveImageUrls = [];
+        const productCategory = '{{product.category}}';
+        const selectElement = document.getElementById('category');
+        const delImageUrlField = document.getElementById('delImageUrl');
+        const saveImageUrlField = document.getElementById('saveImageUrl');
+        Array.from(selectElement.options).forEach(function(option) {
+            if (option.value === productCategory) {
+                option.selected = true; 
+            }
+        });
+        const imageContainer = document.getElementById('imageContainer');
+        imageContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('img-db')) {
+                const clickedImage = event.target;
+                const imageContainer = clickedImage.parentElement; 
+                const imageUrl = clickedImage.src;
+                delImageUrls.push(imageUrl);
+                imageContainer.parentNode.removeChild(imageContainer);
+                checkSubmitButton();
+                delImageUrlField.value = delImageUrls;
+            }
+        });
+        var checkSubmitButton = function () {
+            const fileInput = document.getElementById('image');
+            const imgDbElements = document.querySelectorAll('.img-db');
+            if (fileInput.files.length === 0 && imgDbElements.length === 0) {
+                checkSaveBtn.prop('disabled', true); 
+            } else {
+                checkSaveBtn.prop('disabled', false); 
+            }
+        };
+        
+        var checkSaveBtn=$('.save-btn')
+        checkSaveBtn.click(function () {
+            const imgDbElements = document.querySelectorAll('.img-db');
+            imgDbElements.forEach(function(img) {
+                saveImageUrls.push(img.src);
+            });
+            saveImageUrlField.value = saveImageUrls;
+            checkSaveBtn.prop('disabled', true); 
+            checkSaveBtn.children('.spinner-border').removeClass('visually-hidden'); 
+            $('#form').submit();
+        });
+        document.getElementById('image').addEventListener('change', function(event) {      
+            const fileInput = event.target;
+            const files = fileInput.files;
+            const fileNamesContainer = document.getElementById('fileNames');
+            const imageContainer = document.getElementById('imageContainer');
+            fileNamesContainer.innerHTML = '';
+            //imageContainer.innerHTML = ''; 
+            const dynamicImages = document.querySelectorAll('.dynamic-img-thumbnail');
+            dynamicImages.forEach(function(img) {
+                img.parentNode.removeChild(img);
+            });
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const fileName = document.createElement('div');
+                    fileName.textContent = files[i].name;
+                    fileNamesContainer.appendChild(fileName);
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.alt = file.name;
+                    img.className="img-thumbnail dynamic-img-thumbnail"
+                    imageContainer.appendChild(img);
+                };
+                checkSubmitButton();
+
+                reader.readAsDataURL(file); 
+            }
+        });
+    })
+</script>
